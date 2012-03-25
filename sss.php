@@ -1,8 +1,8 @@
 <?php
 /* 
 Plugin Name: Smoothness Slider Shortcode
-Plugin URI: http://www.interlacelab.com/wordpress-smooth-slider-shortcode/
-Version: v1.0.0
+Plugin URI: http://www.interlacelab.com/wordpress-smooth-slider-shortcode/ 
+Version: v1.0.1
 Author: <a href="http://www.interlacelab.com">Noel Jarencio.</a>
 Description: Smoothness Slider Shortcode is a WordPress Plugin for creating dynamic slider for posts and pages. You can place the slider to any post(s) or page(s) you want by placing the slider shortcode. Powerful features includes searchable photo upload, show/hide images in slider, and each image can be customize with different animation.
  
@@ -36,7 +36,7 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 			global $wpdb;
 
 			$wpdb->query("
-				CREATE TABLE IF NOT EXISTS `sss_slider` (
+				CREATE TABLE IF NOT EXISTS `{$this->table}` (
 					`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 					`filename` varchar(255) NOT NULL,
 					`active` tinyint(1) unsigned NOT NULL DEFAULT '1',
@@ -312,7 +312,7 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 			global $wpdb;
 
 			$query = $wpdb->get_results("
-				SELECT * FROM sss_slider
+				SELECT * FROM {$this->table}
 				WHERE active = 1
 			");
 
@@ -361,7 +361,7 @@ if (isset($sss)) {
 	add_action( 'admin_head', array(&$sss, 'admin_css_js'));
 	add_action( 'wp_head', array(&$sss, 'add_front_css'));
 	add_action( 'wp_footer', array(&$sss, 'add_front_js'));
-	add_action( 'activate_smooth-slider-shortcode/sss.php',  array(&$sss, 'init'));
+	add_action( 'activate_smoothness-slider-shortcode/sss.php',  array(&$sss, 'init'));
 
 	add_shortcode( 'smoothness-slider', array(&$sss, 'slider_shortcode') );
 }
