@@ -4,7 +4,7 @@ Donate link: http://www.interlacelab.com/wordpress-smooth-slider-shortcode/
 Tags: smooth slider, slider, jquery slider, gallery slider
 Requires at least: 3.3.1
 Tested up to: 3.3.1
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 
 Smoothness Slider Shortcode is a WordPress Plugin for creating dynamic slider.
 
@@ -22,7 +22,8 @@ This section describes how to install the plugin and get it working.
 
 How to use:
 
-[smoothness-slider]
+To show as slider: [smoothness-slider]
+To show as gallery: [smoothness-gallery]
 
 
 == Frequently Asked Questions ==
@@ -36,9 +37,16 @@ How to use:
 2. Sample page with animation
 3. Shortcode in wordpress editor
 4. Smoothness slider admin settings
+5. Gallery view
+6. Gallery view lightbox
 
 
 == Changelog ==
+= 1.1.0 =
+* Added gallery view
+* Added lightbox support in gallery view
+* Added default width and height settings
+
 = 1.0.1 =
 * Fixed does not install slider table when activating plugin
 
@@ -55,3 +63,5 @@ How to use:
 * Multiple photo upload
 * Beautiful and smooth animations
 * Admin can easily search uploaded photos
+* Built in gallery view 
+* Built in lightbox in gallery view

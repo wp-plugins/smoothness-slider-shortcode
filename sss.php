@@ -2,7 +2,7 @@
 /* 
 Plugin Name: Smoothness Slider Shortcode
 Plugin URI: http://www.interlacelab.com/wordpress-smooth-slider-shortcode/ 
-Version: v1.0.1
+Version: v1.1.0
 Author: <a href="http://www.interlacelab.com">Noel Jarencio.</a>
 Description: Smoothness Slider Shortcode is a WordPress Plugin for creating dynamic slider for posts and pages. You can place the slider to any post(s) or page(s) you want by placing the slider shortcode. Powerful features includes searchable photo upload, show/hide images in slider, and each image can be customize with different animation.
  
@@ -49,6 +49,8 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 
 			update_option('sss-slider_width', 980);
 			update_option('sss-slider_height', 330);
+			update_option('sss-gallery_img_width', 280);
+			update_option('sss-gallery_img_height', 180);
 		}
 
 		function admin_css_js(){
@@ -84,6 +86,19 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 
 			wp_register_style('nivo-theme', plugins_url('js/nivoslider/themes/default/default.css', __FILE__));
 			wp_enqueue_style( 'nivo-theme');
+
+			wp_register_style('shadow', plugins_url('css/shadows.css', __FILE__));
+			wp_enqueue_style( 'shadow');
+
+			wp_register_style('lightbox-style', plugins_url('js/fancybox/jquery.fancybox-1.3.4.css', __FILE__));
+			wp_enqueue_style( 'lightbox-style');
+
+			wp_register_style('front-style', plugins_url('css/front.css', __FILE__));
+			wp_enqueue_style( 'front-style');
+
+			echo '<!--[if IE 8]>
+				<link rel="stylesheet" href="'.plugins_url('shadows-for-ie/shadows-ie.css', __FILE__).'" />
+			<![endif]-->';
 		}
 
 		function add_front_js(){
@@ -98,6 +113,25 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 				plugins_url('js/front.js', __FILE__),
 				array('jquery')
 			);
+
+			wp_enqueue_script(
+				'fancybox-script',
+				plugins_url('js/fancybox/jquery.fancybox-1.3.4.pack.js', __FILE__),
+				array('jquery')
+			);
+
+			wp_enqueue_script(
+				'jquery-mousewheel',
+				plugins_url('js/fancybox/jquery.mousewheel-3.0.4.pack.js', __FILE__),
+				array('jquery')
+			);
+
+			echo '<!--[if IE 8]>
+				<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+
+				<script src="'.plugins_url('js/jquery.transform-0.9.3.min.js', __FILE__).'"></script>
+				<script src="'.plugins_url('js/shadows-ie.js', __FILE__).'"></script>
+			<![endif]-->';
 		}
 
         function slider_settings() {
@@ -188,6 +222,8 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 			if(isset($_POST['save_settings'])){
 				update_option('sss-slider_width', strip_tags($_POST['slider_width']));
 				update_option('sss-slider_height', strip_tags($_POST['slider_height']));
+				update_option('sss-gallery_img_width', strip_tags($_POST['gallery_img_width']));
+				update_option('sss-gallery_img_height', strip_tags($_POST['gallery_img_height']));
 			}
 			?>
 			<div class="wrap sss-manager">
@@ -290,14 +326,24 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 							<?php
 							$slider_width = get_option('sss-slider_width');
 							$slider_height = get_option('sss-slider_height');
+							$gallery_img_width = get_option('sss-gallery_img_width');
+							$gallery_img_height = get_option('sss-gallery_img_height');
 							?>
 							<p>
 								<label for="slider_width">Slider Width: </label>
-								<input type="text" name="slider_width" id="slider_width" value="<?php echo $slider_width ?>" />
+								<input type="text" name="slider_width" id="slider_width" value="<?php echo $slider_width ? $slider_width : 980 ?>" />
 							</p>
 							<p>
 								<label for="slider_height">Slider Height: </label>
-								<input type="text" name="slider_height" id="slider_height" value="<?php echo $slider_height ?>" />
+								<input type="text" name="slider_height" id="slider_height" value="<?php echo $slider_height ? $slider_height : 330 ?>" />
+							</p>
+							<p>
+								<label for="gallery_img_width">Gallery Image Width: </label>
+								<input type="text" name="gallery_img_width" id="gallery_img_width" value="<?php echo $gallery_img_width ? $gallery_img_width : 280 ?>" />
+							</p>
+							<p>
+								<label for="gallery_img_height">Gallery Image Height: </label>
+								<input type="text" name="gallery_img_height" id="gallery_img_height" value="<?php echo $gallery_img_height ? $gallery_img_height : 180 ?>" />
 							</p>
 							<p><input type="submit" name="save_settings" class="button-primary" value="Save" /></p>
 						</form>
@@ -318,6 +364,8 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 
 			$width = get_option('sss-slider_width');
 			$height = get_option('sss-slider_height');
+			$width = $width ? $width : 980;
+			$height = $height ? $height : 330;
 
 			$imgs = '';
 			foreach($query as $row){
@@ -330,6 +378,31 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 				</div>
 			</div>
 			<div style="clear: both"></div>';
+
+			return $html;
+		}
+
+		function gallery_shortcode(){
+			global $wpdb;
+
+			$gallery_img_width = get_option('sss-gallery_img_width');
+			$gallery_img_height = get_option('sss-gallery_img_height');
+			$gallery_img_width = $gallery_img_width ? $gallery_img_width : 280;
+			$gallery_img_height = $gallery_img_height ? $gallery_img_height : 180;
+
+			$query = $wpdb->get_results("
+				SELECT * FROM {$this->table}
+				WHERE active = 1
+			");
+
+			$imgs = '';
+			foreach($query as $row){
+				$imgs .= '<div class="img-wrap RightWarpShadow RWLarge RWNormal" style="width: '.$gallery_img_width.'; height: '.$gallery_img_height.'"><a href="'.get_bloginfo('wpurl').'/wp-content/uploads/'.$row->filename.'" class="fancybox"><img src="'.plugins_url('show_image.php', __FILE__).'?filename=../../uploads/'.$row->filename.'&w='.$gallery_img_width.'&h='.$gallery_img_height.'" alt="" /></a></div>'."\n";
+			}
+
+			$html = '<div class="sss-container">
+				'.$imgs.'
+			</div>';
 
 			return $html;
 		}
@@ -364,5 +437,7 @@ if (isset($sss)) {
 	add_action( 'activate_smoothness-slider-shortcode/sss.php',  array(&$sss, 'init'));
 
 	add_shortcode( 'smoothness-slider', array(&$sss, 'slider_shortcode') );
+
+	add_shortcode( 'smoothness-gallery', array(&$sss, 'gallery_shortcode') );
 }
 ?>

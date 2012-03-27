@@ -1,0 +1,14 @@
+.sss-container{
+}
+
+.sss-container .img-wrap {
+	margin: 20px 10px;
+	background: #ececec;
+	padding: 10px;
+	display: inline-block;
+}
+
+.sss-container .img-wrap img{
+	max-width: 100%;
+}
+
