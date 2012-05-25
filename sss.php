@@ -266,7 +266,7 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 							?>
 								<tr class="gradeA">
 									<td><?php echo $row->id ?></td>
-									<td><img src="<?php echo plugins_url('show_image.php', __FILE__) ?>?filename=../../uploads/<?php echo $row->filename ?>&w=80&h=80" /></td>
+									<td><img src="<?php echo plugins_url('show_image.php', __FILE__) ?>?filename=uploads/<?php echo $row->filename ?>&w=80&h=80" /></td>
 									<td><?php echo $row->filename ?></td>
 									<td>
 										<?php if($row->active == 1){ ?>
@@ -397,7 +397,7 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 
 			$imgs = '';
 			foreach($query as $row){
-				$imgs .= '<div class="img-wrap RightWarpShadow RWLarge RWNormal" style="width: '.$gallery_img_width.'; height: '.$gallery_img_height.'"><a href="'.get_bloginfo('wpurl').'/wp-content/uploads/'.$row->filename.'" class="fancybox"><img src="'.plugins_url('show_image.php', __FILE__).'?filename=../../uploads/'.$row->filename.'&w='.$gallery_img_width.'&h='.$gallery_img_height.'" alt="" /></a></div>'."\n";
+				$imgs .= '<div class="img-wrap RightWarpShadow RWLarge RWNormal" style="width: '.$gallery_img_width.'; height: '.$gallery_img_height.'"><a href="'.get_bloginfo('wpurl').'/wp-content/uploads/'.$row->filename.'" class="fancybox"><img src="'.plugins_url('show_image.php', __FILE__).'?filename=uploads/'.$row->filename.'&w='.$gallery_img_width.'&h='.$gallery_img_height.'" alt="" /></a></div>'."\n";
 			}
 
 			$html = '<div class="sss-container">

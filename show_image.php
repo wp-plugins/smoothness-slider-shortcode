@@ -1,7 +1,7 @@
 <?php
 require_once 'lib/phpthumb/ThumbLib.inc.php';
 
-$filename = $_GET['filename'];
+$filename = '../../' . $_GET['filename'];
 $w = $_GET['w'];
 $h = $_GET['h'];
 
