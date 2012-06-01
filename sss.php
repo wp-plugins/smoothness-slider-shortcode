@@ -2,7 +2,7 @@
 /* 
 Plugin Name: Smoothness Slider Shortcode
 Plugin URI: http://www.interlacelab.com/wordpress-smooth-slider-shortcode/ 
-Version: v1.1.1
+Version: v1.1.2
 Author: <a href="http://www.interlacelab.com">Noel Jarencio.</a>
 Description: Smoothness Slider Shortcode is a WordPress Plugin for creating dynamic slider for posts and pages. You can place the slider to any post(s) or page(s) you want by placing the slider shortcode. Powerful features includes searchable photo upload, show/hide images in slider, and each image can be customize with different animation.
  
@@ -369,7 +369,7 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 
 			$imgs = '';
 			foreach($query as $row){
-				$imgs .= '<img src="wp-content/uploads/'.$row->filename.'" '.($row->animation != 'random' ? 'data-transition="' . $row->animation . '"' : '')." />\n";
+				$imgs .= '<img src="'.get_bloginfo('wpurl').'/wp-content/uploads/'.$row->filename.'" '.($row->animation != 'random' ? 'data-transition="' . $row->animation . '"' : '')." />\n";
 			}
 
 			$html = '<div class="slider-wrapper theme-default">

@@ -4,7 +4,7 @@ Donate link: http://www.interlacelab.com/wordpress-smooth-slider-shortcode/
 Tags: smooth slider, slider, jquery slider, gallery slider
 Requires at least: 3.3.1
 Tested up to: 3.3.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 
 Smoothness Slider Shortcode is a WordPress Plugin for creating dynamic slider.
 
@@ -42,6 +42,9 @@ To show as gallery: [smoothness-gallery]
 
 
 == Changelog ==
+= 1.1.2 =
+* Fixed images not showing on sub pages 
+
 = 1.1.1 =
 * Fixed 404 error not found on images 
 
