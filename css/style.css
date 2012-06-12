@@ -41,3 +41,8 @@ table.dataTable td {
 h3.hndle{
 	padding: 8px 10px;
 }
+
+.sss-manager label{
+	min-width: 120px;
+	display: inline-block;
+}

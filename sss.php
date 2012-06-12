@@ -2,7 +2,7 @@
 /* 
 Plugin Name: Smoothness Slider Shortcode
 Plugin URI: http://www.interlacelab.com/wordpress-smooth-slider-shortcode/ 
-Version: v1.1.2
+Version: v1.1.3
 Author: <a href="http://www.interlacelab.com">Noel Jarencio.</a>
 Description: Smoothness Slider Shortcode is a WordPress Plugin for creating dynamic slider for posts and pages. You can place the slider to any post(s) or page(s) you want by placing the slider shortcode. Powerful features includes searchable photo upload, show/hide images in slider, and each image can be customize with different animation.
  
@@ -110,7 +110,7 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 
 			wp_enqueue_script(
 				'sss-front-script',
-				plugins_url('js/front.js', __FILE__),
+				plugins_url('js/front.php', __FILE__),
 				array('jquery')
 			);
 
@@ -224,6 +224,9 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 				update_option('sss-slider_height', strip_tags($_POST['slider_height']));
 				update_option('sss-gallery_img_width', strip_tags($_POST['gallery_img_width']));
 				update_option('sss-gallery_img_height', strip_tags($_POST['gallery_img_height']));
+
+				update_option('sss-show_direction_nav', (isset($_POST['show_direction_nav']) ? 1 : 0));
+				update_option('sss-show_control_nav', (isset($_POST['show_control_nav']) ? 1 : 0));
 			}
 			?>
 			<div class="wrap sss-manager">
@@ -328,6 +331,8 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 							$slider_height = get_option('sss-slider_height');
 							$gallery_img_width = get_option('sss-gallery_img_width');
 							$gallery_img_height = get_option('sss-gallery_img_height');
+							$show_direction_nav = get_option('sss-show_direction_nav');
+							$show_control_nav = get_option('sss-show_control_nav');
 							?>
 							<p>
 								<label for="slider_width">Slider Width: </label>
@@ -344,6 +349,18 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 							<p>
 								<label for="gallery_img_height">Gallery Image Height: </label>
 								<input type="text" name="gallery_img_height" id="gallery_img_height" value="<?php echo $gallery_img_height ? $gallery_img_height : 180 ?>" />
+							</p>
+							<p>
+								<label for="show_direction_nav">
+									<input type="checkbox" name="show_direction_nav" id="show_direction_nav" <?php echo $show_direction_nav === false || $show_direction_nav === '1' ? 'checked="checked"' : '' ?> />
+									Show previous/next navigation
+								</label>
+							</p>
+							<p>
+								<label for="show_control_nav">
+									<input type="checkbox" name="show_control_nav" id="show_control_nav" <?php echo $show_control_nav === false || $show_control_nav === '1' ? 'checked="checked"' : '' ?> />
+									Show control navigation
+								</label>
 							</p>
 							<p><input type="submit" name="save_settings" class="button-primary" value="Save" /></p>
 						</form>
