@@ -1,0 +1,48 @@
+.sss-manager input[type='file']{
+	display: inline-block;
+}
+
+.sss-manager .add-button{
+	background: url(../images/add.png);
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin: 0px 10px;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+table.dataTable td {
+	padding: 8px 10px;
+}
+
+.text-left{
+	text-align: left;
+}
+
+.sss-manager .active-icon{
+	background: url(../images/tick.png);
+	width: 16px;
+	height: 16px;
+	display: block;
+}
+
+.sss-manager .delete-icon{
+	background: url(../images/cross.png);
+	width: 16px;
+	height: 16px;
+	display: block;
+}
+
+.sss-manager .postbox{
+	margin: 20px 0;
+}
+
+h3.hndle{
+	padding: 8px 10px;
+}
+
+.sss-manager label{
+	min-width: 120px;
+	display: inline-block;
+}
