@@ -2,11 +2,11 @@
 /* 
 Plugin Name: Smoothness Slider Shortcode
 Plugin URI: http://www.interlacelab.com/wordpress-smooth-slider-shortcode/ 
-Version: v1.1.4
+Version: v1.2.0
 Author: <a href="http://www.interlacelab.com">Noel Jarencio.</a>
 Description: Smoothness Slider Shortcode is a WordPress Plugin for creating dynamic slider for posts and pages. You can place the slider to any post(s) or page(s) you want by placing the slider shortcode. Powerful features includes searchable photo upload, show/hide images in slider, and each image can be customize with different animation.
  
-Copyright 2012 InterlaceLab.
+Copyright 2012 Interlace Web Solutions.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,14 +37,22 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 
 			$wpdb->query("
 				CREATE TABLE IF NOT EXISTS `{$this->table}` (
-					`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-					`filename` varchar(255) NOT NULL,
-					`active` tinyint(1) unsigned NOT NULL DEFAULT '1',
-					`animation` varchar(100) NOT NULL DEFAULT 'random',
-					`date_uploaded` datetime NOT NULL,
-					PRIMARY KEY (`id`),
-					KEY `filename` (`filename`)
+                    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                    `filename` varchar(255) NOT NULL,
+                    `active` tinyint(1) unsigned NOT NULL DEFAULT '1',
+                    `animation` varchar(100) NOT NULL DEFAULT 'random',
+                    `date_uploaded` datetime NOT NULL,
+                    PRIMARY KEY (`id`),
+                    KEY `filename` (`filename`)
 				) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+			");
+
+			$wpdb->query("
+                ALTER TABLE  `{$this->table}` ADD  `link` VARCHAR( 500 ) NOT NULL AFTER  `filename`;
+			");
+
+			$wpdb->query("
+                ALTER TABLE  `{$this->table}` ADD  `title` VARCHAR( 500 ) NOT NULL AFTER  `link`;
 			");
 
 			update_option('sss-slider_width', 980);
@@ -63,15 +71,17 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 			wp_register_style('sss-style', plugins_url('css/style.css', __FILE__));
 			wp_enqueue_style( 'sss-style');
 
+            /*
 			wp_enqueue_script(
 				'jquery-ui',
 				'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js',
 				array('jquery')
 			);
+            */
 			wp_enqueue_script(
 				'dataTables',
 				plugins_url('js/jquery.dataTables.min.js', __FILE__),
-				array('jquery')
+				array('jquery', 'jquery-ui-core', 'jquery-ui-dialog')
 			);
 			wp_enqueue_script(
 				'sss-script',
@@ -250,12 +260,12 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 						<table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%">
 							<thead>
 								<tr>
-									<th class="text-left">ID</th>
 									<th class="text-left">Image</th>
-									<th class="text-left">Filename</th>
+									<th class="text-left">Title</th>
+									<th class="text-left">Link</th>
 									<th class="text-left">Active</th>
 									<th class="text-left">Animation</th>
-									<th>Date</th>
+									<th class="text-left">Date</th>
 									<th>Delete</th>
 								</tr>
 							</thead>
@@ -268,9 +278,20 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 							foreach($query as $row){
 							?>
 								<tr class="gradeA">
-									<td><?php echo $row->id ?></td>
 									<td><img src="<?php echo plugins_url('show_image.php', __FILE__) ?>?filename=uploads/<?php echo $row->filename ?>&w=80&h=80" /></td>
-									<td><?php echo $row->filename ?></td>
+                                    <td>
+                                        <input type="text" name="title" image_id="<?php echo $row->id ?>" class="image-title" placeholder="Title" title="Put some title and Press enter to save" value="<?php echo $row->title ?>" />
+                                    </td>
+									<td>
+                                        <a href="<?php echo !empty($row->link) ? $row->link : '#add-link' ?>" current_link="<?php echo !empty($row->link) ? $row->link : '' ?>" image_id="<?php echo $row->id ?>" class="add-link">
+                                            <?php 
+                                            if(!empty($row->link))
+                                                echo 'Update Link';
+                                            else
+                                                echo 'Add Link';
+                                            ?>
+                                        </a>
+                                    </td>
 									<td>
 										<?php if($row->active == 1){ ?>
 										<a href="?page=slider-settings&deactivate=<?php echo $row->id ?>" class="active-icon" title="Click to deactivate"></a>
@@ -300,19 +321,19 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 										</select>
 										</form>
 									</td>
-									<td class="center"><?php echo $row->date_uploaded ?></td>
+                                    <td><?php echo $row->date_uploaded ?></td>
 									<td class="center"><a href="?page=slider-settings&delete=<?php echo $row->id ?>" class="delete-icon"></a></td>
 								</tr>
 							<?php } ?>
 							</tbody>
 							<tfoot>
 								<tr>
-									<th class="text-left">ID</th>
 									<th class="text-left">Image</th>
-									<th class="text-left">Filename</th>
+									<th class="text-left">Title</th>
+									<th class="text-left">Link</th>
 									<th class="text-left">Active</th>
 									<th class="text-left">Animation</th>
-									<th>Date</th>
+									<th class="text-left">Date</th>
 									<th>Delete</th>
 								</tr>
 							</tfoot>
@@ -352,13 +373,13 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 							</p>
 							<p>
 								<label for="show_direction_nav">
-									<input type="checkbox" name="show_direction_nav" id="show_direction_nav" <?php echo $show_direction_nav === false || $show_direction_nav === '1' ? 'checked="checked"' : '' ?> />
+									<input type="checkbox" name="show_direction_nav" id="show_direction_nav" <?php echo $show_direction_nav === false || $show_direction_nav == '1' ? 'checked="checked"' : '' ?> />
 									Show previous/next navigation
 								</label>
 							</p>
 							<p>
 								<label for="show_control_nav">
-									<input type="checkbox" name="show_control_nav" id="show_control_nav" <?php echo $show_control_nav === false || $show_control_nav === '1' ? 'checked="checked"' : '' ?> />
+									<input type="checkbox" name="show_control_nav" id="show_control_nav" <?php echo $show_control_nav === false || $show_control_nav == '1' ? 'checked="checked"' : '' ?> />
 									Show control navigation
 								</label>
 							</p>
@@ -367,6 +388,13 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 					</div>
 				</div>
 			</div>
+
+            <div id="addLinkDialog" title="Add Link">
+                <form method="post">
+                <input type="hidden" id="imageID" />
+                <p><label>Link: <input type="text" name="image_link" id="imageLink" value="" placeholder="http://" size="30" /></label></p>
+                </form>
+            </div>
 			<!-- .wrap .sss-manager -->
 			<?php
         }
@@ -386,7 +414,10 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 
 			$imgs = '';
 			foreach($query as $row){
-				$imgs .= '<img src="'.get_bloginfo('wpurl').'/wp-content/uploads/'.$row->filename.'" '.($row->animation != 'random' ? 'data-transition="' . $row->animation . '"' : '')." />\n";
+                if(!empty($row->link))
+                    $imgs .= '<a href="'.$row->link.'"><img src="'.get_bloginfo('wpurl').'/wp-content/uploads/'.$row->filename.'" '.($row->animation != 'random' ? 'data-transition="' . $row->animation . '"' : '')." title=\"".$row->title."\" /></a>\n";
+                else
+                    $imgs .= '<img src="'.get_bloginfo('wpurl').'/wp-content/uploads/'.$row->filename.'" '.($row->animation != 'random' ? 'data-transition="' . $row->animation . '"' : '')." title=\"".$row->title."\" />\n";
 			}
 
 			$html = '<div class="slider-wrapper theme-default">
@@ -423,6 +454,40 @@ if (!class_exists("SmoothnessSliderShortcode")) {
 
 			return $html;
 		}
+
+        function ajax_add_link(){
+            global $wpdb;
+
+            $result = $wpdb->update(
+                $this->table,
+                array(
+                    'link' => strip_tags($_POST['link']),
+                ),
+                array(
+                    'id' => strip_tags($_POST['id'])
+                )
+            );
+
+            echo $result;
+            exit;
+        }
+
+        function ajax_set_title(){
+            global $wpdb;
+
+            $result = $wpdb->update(
+                $this->table,
+                array(
+                    'title' => strip_tags($_POST['title']),
+                ),
+                array(
+                    'id' => strip_tags($_POST['id'])
+                )
+            );
+
+            echo $result;
+            exit;
+        }
 	}
 }
 
@@ -456,5 +521,11 @@ if (isset($sss)) {
 	add_shortcode( 'smoothness-slider', array(&$sss, 'slider_shortcode') );
 
 	add_shortcode( 'smoothness-gallery', array(&$sss, 'gallery_shortcode') );
+
+    add_action( 'wp_ajax_add_link', array(&$sss, 'ajax_add_link') );
+    add_action( 'wp_ajax_nopriv_add_link', array(&$sss, 'ajax_add_link') );
+
+    add_action( 'wp_ajax_set_title', array(&$sss, 'ajax_set_title') );
+    add_action( 'wp_ajax_nopriv_set_title', array(&$sss, 'ajax_set_title') );
 }
 ?>
