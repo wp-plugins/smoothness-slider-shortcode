@@ -26,7 +26,6 @@ jQuery(document).ready(function(){
                             $( '#addLinkDialog' ).dialog( "close" );
                         else{
                             alert('Error adding link');
-                            console.log(response);
                             $( '#addLinkDialog' ).dialog( "close" );
                         }
                     }
