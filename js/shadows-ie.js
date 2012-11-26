@@ -1,4 +1,6 @@
-$(function(){
+jQuery(document).ready(function(){
+    var $ = jQuery.noConflict();
+
 	if( $.browser.msie ){
 
 		//Warp Shadows
